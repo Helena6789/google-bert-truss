@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: truss-bert-base
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: truss-bert-base-layer
+  template:
+    metadata:
+      labels:
+        component: truss-bert-base-layer
+    spec:
+      containers:
+      - name: truss-bert-base-container
+        image: htrivedi05/truss-bert-base:latest
+        ports:
+          - containerPort: 8080
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: truss-bert-base-service
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    component: truss-bert-base-layer
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
